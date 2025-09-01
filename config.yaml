@@ -1,20 +1,8 @@
-# Example configuration file for the Strava GPX viewer
-#
-# Copy this file to ``config.yaml`` and fill in the fields below to
-# customise your application credentials and Strava API keys.
-#
-# You can override any of these settings via environment variables:
-#   STRAVA_APP_USERNAME, STRAVA_APP_PASSWORD
-#   STRAVA_CLIENT_ID, STRAVA_CLIENT_SECRET,
-#   STRAVA_REFRESH_TOKEN, STRAVA_ACCESS_TOKEN
-#
-app_username: admin
-app_password: pass
-
-# Strava API credentials (currently unused in the viewer, but
-# available for future extensions).  See https://developers.strava.com/
+app_username: strava_username_or_email
+app_password: strava_password
 strava:
-  client_id: "#####"
-  client_secret: "#####"
-  refresh_token: "######"
-  access_token: "########"
+  client_id: 'app_client_id'
+  client_secret: '#########'
+  refresh_token: '#########'
+  access_token: "############"
+  expires_at: 1756780223
