@@ -1,40 +1,35 @@
-# Byte-compiled / cache files
+# Byte-compiled / cache
 __pycache__/
 *.py[cod]
 *$py.class
 
-# Virtual environments
-.env
-.venv
-env/
+# Virtual environments (any name)
+.venv/
 venv/
+env/
 ENV/
-strava/Lib/
+*.env/
+*.venv/
+# Common Windows venv layout
 Lib/
 Scripts/
-bin/
 Include/
+pyvenv.cfg
+# If your venv lives in a named folder (e.g., strava/)
+strava/
 
-# Distribution / packaging
+# Packaging / build
 .Python
 build/
-develop-eggs/
 dist/
-downloads/
-eggs/
 .eggs/
-lib/
-lib64/
-parts/
-sdist/
-var/
 *.egg-info/
-.installed.cfg
 *.egg
 
-# Jupyter Notebook checkpoints
-.ipynb_checkpoints
+# Jupyter
+.ipynb_checkpoints/
 
-# IDE settings
+# IDE/editor
 .vscode/
 .idea/
+EOF
