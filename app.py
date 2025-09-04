@@ -5,6 +5,7 @@
 import base64
 import os
 from datetime import datetime, timedelta, timezone, date
+from io import StringIO # NEW IMPORT FOR PANDAS FUTUREWARNING FIX
 
 import numpy as np
 import pandas as pd
@@ -23,6 +24,10 @@ import ui_components as ui
 app = Dash(__name__, suppress_callback_exceptions=True)
 server = app.server
 server.secret_key = os.getenv("APP_SECRET_KEY", os.urandom(24).hex())
+
+# --- Set custom bike icon for the browser tab ---
+app.title = "Strava Dashboard"
+app.head = [html.Link(rel='icon', href='/assets/favicon.svg', type='image/svg+xml')]
 
 # --- Initial Setup ---
 cfg.migrate_legacy_tokens_if_needed()
@@ -50,6 +55,7 @@ def app_login():
             return redirect("/")
         return redirect("/app-login?error=1")
     error_message = "<p class='error-message'>Invalid credentials. Please try again.</p>" if request.args.get("error") else ""
+    
     return f"""
     <!DOCTYPE html>
     <html lang="en">
@@ -57,6 +63,7 @@ def app_login():
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Login - Strava Dashboard</title>
+        <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
         <link rel="stylesheet" href="/assets/style.css">
         <link rel="preconnect" href="https://fonts.googleapis.com">
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -129,17 +136,28 @@ app.layout = html.Div([
                 html.Span(id="cfg-save-msg", className="status-msg")
             ]),
 
-            html.Div(className="card", children=[
+            # THIS ENTIRE CARD'S STRUCTURE HAS BEEN REBUILT
+            html.Div(className="card activity-selection-card", children=[
                 html.H3("Activity Selection"),
                 dcc.Dropdown(id="dropdown-activity", placeholder="Syncing recent activities..."),
-                html.Div(className="date-search-container", children=[
-                    dcc.DatePickerRange(
-                        id='date-picker-range', min_date_allowed=date(2008, 1, 1), max_date_allowed=date.today(),
-                        initial_visible_month=date.today(), end_date=date.today()
-                    ),
-                    html.Button("Search by Date", id="btn-search-dates", className="button-secondary"),
+                
+                # Date picker now gets its own clean line
+                dcc.DatePickerRange(
+                    id='date-picker-range',
+                    min_date_allowed=date(2008, 1, 1),
+                    max_date_allowed=date.today(),
+                    initial_visible_month=date.today(),
+                    start_date_placeholder_text="Start Date",
+                    end_date_placeholder_text="End Date",
+                    end_date=date.today()
+                ),
+
+                # Buttons are now grouped in an action bar
+                html.Div(className="action-button-group", children=[
+                    html.Button("Search by Date", id="btn-search-dates"), # Uses primary button style
+                    html.Button("Sync Last 30 Days", id="btn-sync-activities", className="button-secondary"),
                 ]),
-                html.Button("Sync Last 30 Days", id="btn-sync-activities"),
+
                 dcc.Upload(id="uploader-gpx", children=html.Div(["Drag & Drop or ", html.A("Select GPX File")]), className="gpx-uploader"),
                 html.Span(id="activity-load-msg", className="status-msg")
             ]),
@@ -213,8 +231,9 @@ def hydrate_config_inputs(config_data):
     )
 
 @app.callback(
-    Output("oauth-status-container", "children"), Input("store-config", "data"), Input("btn-refresh-token", "n_clicks"))
-def update_oauth_status(_, n_clicks_refresh):
+    Output("oauth-status-container", "children"),
+    Input("store-config", "data"))
+def update_oauth_status(_):
     tokens = cfg.load_tokens()
     if tokens.get("access_token"):
         try:
@@ -222,7 +241,14 @@ def update_oauth_status(_, n_clicks_refresh):
             name = f"{athlete.get('firstname','')} {athlete.get('lastname','')}".strip()
             return html.Div([
                 html.Span(f"Connected as {name}"),
-                html.Button("Refresh Token", id="btn-refresh-token", className="button-secondary"),
+
+                # ADDED 'header-tooltip' class to this container for specific styling
+                html.Div(className="tooltip-container header-tooltip", children=[
+                    html.Button("Refresh Token", id="btn-refresh-token", className="button-secondary"),
+                    html.Span("?", className="tooltip-icon"),
+                    html.P("Manually requests a new access token from Strava. The app does this automatically when needed, but this button can be used to force a refresh if the connection seems stale.", className="tooltip-text")
+                ]),
+
                 html.A("Logout", href="/logout", className="button-logout")
             ])
         except Exception as e:
@@ -232,7 +258,9 @@ def update_oauth_status(_, n_clicks_refresh):
     return html.A("Connect with Strava", href="/login", className="button-login")
 
 @app.callback(
-    Output("activity-load-msg", "children", allow_duplicate=True), Input("btn-refresh-token", "n_clicks"), prevent_initial_call=True)
+    Output("activity-load-msg", "children", allow_duplicate=True),
+    Input("btn-refresh-token", "n_clicks"),
+    prevent_initial_call=True)
 def handle_token_refresh(n_clicks):
     if not n_clicks:
         return no_update
@@ -336,10 +364,9 @@ def update_all_figures_and_kpis(df_json, color_by, apply_filter_val, min_speed, 
         no_data_str = "---"
         return (blank_fig,) * 7 + (no_data_str,) * 7
 
-    # This is the raw, unfiltered dataframe
-    unfiltered_df = pd.read_json(df_json, orient="split")
+    # CORRECTED: FIX FOR PANDAS FUTUREWARNING
+    unfiltered_df = pd.read_json(StringIO(df_json), orient="split")
     
-    # The dataframe to be used for calculations is determined by the filter
     if 'apply' in (apply_filter_val or []):
         df = dp.apply_moving_filter(unfiltered_df, min_speed)
     else:
@@ -350,11 +377,8 @@ def update_all_figures_and_kpis(df_json, color_by, apply_filter_val, min_speed, 
             return f"{df[series].mean() * conversion_factor:.{precision}f}{suffix}"
         return "---"
 
-    # --- CORRECTED RIDE TIME CALCULATION ---
-    # Check if the moving time column exists (it will only exist if the filter was applied)
     if 'moving_t_rel_sec' in df and not df.empty:
         total_seconds = df['moving_t_rel_sec'].max()
-    # Fallback to the original total elapsed time if the filter is off or for GPX files
     elif 't_rel_sec' in df and not df.empty:
         total_seconds = df['t_rel_sec'].max()
     else:
@@ -393,11 +417,18 @@ def update_all_figures_and_kpis(df_json, color_by, apply_filter_val, min_speed, 
 # -------------------------
 if __name__ == "__main__":
     import argparse
+    import webbrowser # NEW IMPORT FOR AUTO-OPEN
+    import threading  # NEW IMPORT FOR AUTO-OPEN
+
     parser = argparse.ArgumentParser()
     parser.add_argument("--port", type=int, default=8000)
     parser.add_argument("--host", default="127.0.0.1")
     parser.add_argument("--debug", action="store_true")
     args = parser.parse_args()
     
-    print(f"🚀 Starting Strava Dashboard at http://{args.host}:{args.port}")
+    # NEW LOGIC TO AUTO-OPEN BROWSER
+    url = f"http://{args.host}:{args.port}"
+    threading.Timer(1.0, lambda: webbrowser.open(url)).start()
+
+    print(f"🚀 Starting Strava Dashboard at {url}")
     app.run(host=args.host, port=args.port, debug=args.debug)

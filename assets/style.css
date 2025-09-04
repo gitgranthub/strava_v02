@@ -257,29 +257,6 @@ header h1 {
     margin-bottom: 1.5rem;
 }
 
-/* --- NEW: Date Picker Styles --- */
-.date-search-container {
-    display: flex;
-    gap: 0.5rem;
-    align-items: center;
-    margin-top: 1rem;
-}
-.date-search-container .DateInput {
-    width: 120px;
-}
-.date-search-container .DateInput_input {
-    font-size: 0.875rem;
-    padding: 0.75rem;
-    border-radius: 0.5rem;
-    border: 1px solid var(--border-color);
-    background-color: #F9FAFB;
-}
-.date-search-container .button-secondary {
-    padding: 0.7rem 1rem;
-    border-radius: 0.5rem;
-    flex-grow: 1;
-}
-
 /* Login Page Styles */
 .login-body {
     display: flex;
@@ -345,4 +322,168 @@ header h1 {
     margin-top: 1rem;
     font-size: 0.875rem;
     font-weight: 600;
+}
+
+/* --- NEW: Header Layout and Tooltip Fixes --- */
+
+#oauth-status-container {
+    display: flex;
+    align-items: center;
+    gap: 1rem; /* Creates consistent spacing between "Connected as", refresh button, and logout */
+}
+
+/* Aligns the Refresh Token button and its '?' icon horizontally */
+#oauth-status-container .tooltip-container {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem; /* Small space between the button and the icon */
+}
+
+/* This specifically targets the tooltip in the header */
+.header-tooltip .tooltip-text {
+    bottom: auto; /* Unset the default 'bottom' positioning */
+    top: 115%;    /* Position the tooltip to appear 115% below its container */
+}
+
+/* --- NEW: Date Picker Styling and Popup Fixes --- */
+
+/* Fix 1: Allow the calendar popup to display outside the card's boundaries */
+.activity-selection-card {
+    overflow: visible;
+}
+
+/* Fix 2: Ensure the calendar popup is on top of all other elements (like tooltips) */
+.DateRangePicker_picker {
+    z-index: 1000 !important;
+}
+
+/* Fix 3: Professional restyling of the date picker components */
+.date-search-container {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem; /* Add more space between picker and button */
+}
+
+/* Target the wrapper for the date inputs to make it fill available space */
+.DateRangePickerInput {
+    width: 100%;
+    display: flex;
+    align-items: center;
+}
+
+/* Style the individual date input fields to match other inputs */
+.DateInput_input {
+    font-size: 1rem; /* Increase font size for readability */
+    font-family: var(--font-family);
+    padding: 0.75rem;
+    text-align: center;
+    font-weight: 600;
+}
+
+/* Vertically center the arrow and give it some space */
+.DateRangePickerInput_arrow {
+    align-self: center;
+    padding: 0 0.5rem;
+}
+
+/* Adjust the search button to prevent it from shrinking and give it proper padding */
+.date-search-container .button-secondary {
+    flex-shrink: 0;
+    padding: 0.75rem 1.25rem;
+}
+
+/* --- NEW: Date Picker Styling and Popup Fixes (v2) --- */
+
+/* Fix 1: Allow the calendar popup to display outside the card's boundaries */
+.activity-selection-card {
+    overflow: visible;
+}
+
+/* Fix 2: Ensure the calendar popup is on top of all other elements (like tooltips) */
+.DateRangePicker_picker {
+    z-index: 1000 !important;
+}
+
+/* Style the DatePickerRange component itself to take up full width */
+.DateRangePicker {
+    width: 100%;
+    margin: 1rem 0; /* Add vertical spacing */
+}
+
+/* Style the wrapper for the date inputs */
+.DateRangePickerInput {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between; /* Ensures inputs spread out */
+    border: 1px solid var(--border-color);
+    border-radius: 0.5rem;
+    background-color: #F9FAFB;
+}
+
+/* Style the individual date input fields */
+.DateInput_input {
+    font-size: 0.9rem;
+    font-family: var(--font-family);
+    padding: 0.75rem;
+    text-align: center;
+    font-weight: 600;
+    border: none; /* Remove default border */
+    background: transparent; /* Inherit background from parent */
+}
+
+/* Style the arrow between the dates */
+.DateRangePickerInput_arrow {
+    padding: 0 0.5rem;
+}
+
+/* Style the new action bar for the buttons */
+.action-button-group {
+    display: flex;
+    gap: 0.75rem;
+}
+
+/* Make buttons in the group take up equal width and reset margins */
+.action-button-group button {
+    width: 100%;
+    margin-top: 0;
+}
+
+/* --- NEW: Date Picker POPUP Interior Fixes --- */
+
+/* Fix 1: Add padding to the bottom of the calendar to reveal the 'Close' button */
+.DateRangePicker_picker {
+    padding-bottom: 45px !important; /* Force extra space at the bottom */
+}
+
+/* Optional: Style the close button itself for better visibility */
+.DayPicker_closeButton {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--primary-color);
+}
+
+/* Fix 2: Improve the layout and stacking of the keyboard shortcuts tooltip */
+.DateRangePicker_keyboardShortcuts_show {
+    z-index: 1002 !important; /* Ensure it appears ON TOP of the calendar days */
+    padding: 1rem;
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow);
+    background-color: var(--card-background);
+}
+
+/* Style the 'X' close button inside the shortcuts panel for a cleaner look */
+.KeyboardShortcuts_close {
+    font-size: 1.5rem;
+    color: var(--text-color-muted);
+    transition: color 0.2s;
+}
+.KeyboardShortcuts_close:hover {
+    color: var(--text-color);
+}
+
+/* Style the shortcut descriptions for better readability */
+.KeyboardShortcuts_show .KeyboardShortcuts_shortcut {
+    font-family: var(--font-family);
+    font-size: 0.875rem;
 }
