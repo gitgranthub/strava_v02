@@ -33,3 +33,6 @@ dist/
 .vscode/
 .idea/
 EOF
+
+config.json
+tokens.json

@@ -1,0 +1,348 @@
+/* assets/style.css */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
+
+:root {
+    --font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    --background-color: #F8F9FA;
+    --card-background: #FFFFFF;
+    --text-color: #374151;
+    --text-color-muted: #6B7280;
+    --primary-color: #4F46E5; /* Indigo */
+    --primary-color-hover: #4338CA;
+    --secondary-color: #6B7280;
+    --secondary-color-hover: #4B5563;
+    --accent-color: #F97316; /* Strava Orange */
+    --border-color: #E5E7EB;
+    --shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+    --border-radius: 0.75rem; /* 12px */
+}
+
+body {
+    font-family: var(--font-family);
+    background-color: var(--background-color);
+    margin: 0;
+    color: var(--text-color);
+}
+
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 2rem;
+    background-color: var(--card-background);
+    border-bottom: 1px solid var(--border-color);
+    box-shadow: var(--shadow);
+}
+
+header h1 {
+    margin: 0;
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: var(--accent-color);
+}
+
+#oauth-status-container {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+#oauth-status-container span {
+    font-weight: 600;
+}
+
+.button-login, .button-logout, .button-secondary {
+    display: inline-block;
+    padding: 0.6rem 1.2rem;
+    text-decoration: none;
+    border-radius: var(--border-radius);
+    font-weight: 600;
+    cursor: pointer;
+    border: none;
+    transition: background-color 0.2s ease-in-out, transform 0.1s ease;
+}
+.button-login:active, .button-logout:active, .button-secondary:active {
+    transform: scale(0.98);
+}
+
+.button-login {
+    background-color: var(--primary-color);
+    color: white;
+}
+.button-login:hover {
+    background-color: var(--primary-color-hover);
+}
+
+.button-logout {
+    background-color: var(--accent-color);
+    color: white;
+}
+.button-logout:hover {
+    background-color: #E15E00;
+}
+
+.button-secondary {
+    background-color: var(--card-background);
+    color: var(--text-color);
+    border: 1px solid var(--border-color);
+}
+.button-secondary:hover {
+    background-color: #f3f4f6;
+}
+
+.container {
+    max-width: 1600px;
+    margin: 0 auto;
+    padding: 2rem;
+}
+
+.card {
+    background-color: var(--card-background);
+    border-radius: var(--border-radius);
+    padding: 1.5rem;
+    box-shadow: var(--shadow);
+}
+
+.card h3 {
+    margin-top: 0;
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 0.75rem;
+    margin-bottom: 1rem;
+    font-size: 1.125rem;
+}
+
+.grid-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 1.5rem;
+}
+
+/* Form Elements */
+.card label {
+    display: block;
+    font-weight: 600;
+    margin-top: 1rem;
+    margin-bottom: 0.5rem;
+    font-size: 0.875rem;
+}
+
+.card input[type="text"],
+.card input[type="password"],
+.card input[type="number"],
+.card .Select-control {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid var(--border-color);
+    border-radius: 0.5rem;
+    box-sizing: border-box;
+    background-color: #F9FAFB;
+}
+
+.card button {
+    margin-top: 1.5rem;
+    width: 100%;
+    padding: 0.75rem;
+    border: none;
+    background-color: var(--primary-color);
+    color: white;
+    border-radius: 0.5rem;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 1rem;
+    transition: background-color 0.2s ease;
+}
+.card button:hover {
+    background-color: var(--primary-color-hover);
+}
+
+.status-msg {
+    display: inline-block;
+    margin-top: 0.5rem;
+    font-size: 0.875rem;
+    color: var(--primary-color);
+}
+
+.gpx-uploader {
+    border: 2px dashed var(--border-color);
+    border-radius: 0.5rem;
+    padding: 2rem;
+    text-align: center;
+    margin-top: 1rem;
+    cursor: pointer;
+    transition: border-color 0.2s;
+}
+.gpx-uploader:hover {
+    border-color: var(--primary-color);
+}
+
+/* Tooltip */
+.tooltip-container {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    position: relative;
+}
+.tooltip-icon {
+    display: inline-block;
+    width: 1.25rem;
+    height: 1.25rem;
+    border-radius: 50%;
+    background-color: var(--border-color);
+    color: var(--text-color-muted);
+    text-align: center;
+    line-height: 1.25rem;
+    font-weight: 700;
+    cursor: help;
+}
+.tooltip-text {
+    visibility: hidden;
+    width: 280px;
+    background-color: #333;
+    color: #fff;
+    text-align: center;
+    border-radius: 6px;
+    padding: 10px;
+    position: absolute;
+    z-index: 1;
+    bottom: 125%;
+    left: 50%;
+    margin-left: -140px;
+    opacity: 0;
+    transition: opacity 0.3s;
+    font-size: 0.8rem;
+    font-weight: 400;
+}
+.tooltip-container:hover .tooltip-text {
+    visibility: visible;
+    opacity: 1;
+}
+
+/* KPI Banner */
+.grid-kpi {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 1.5rem;
+}
+.kpi-card {
+    background-color: var(--card-background);
+    border-radius: var(--border-radius);
+    padding: 1.5rem;
+    box-shadow: var(--shadow);
+    text-align: center;
+}
+.kpi-card h4 {
+    margin: 0 0 0.5rem 0;
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--text-color-muted);
+}
+.kpi-card p {
+    margin: 0;
+    font-size: 2.25rem;
+    font-weight: 700;
+    color: var(--primary-color);
+}
+
+/* Vitals Grid */
+.grid-vitals {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+    gap: 1.5rem;
+}
+
+/* Map Card Spacing */
+.map-card {
+    margin-bottom: 1.5rem;
+}
+
+/* --- NEW: Date Picker Styles --- */
+.date-search-container {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+    margin-top: 1rem;
+}
+.date-search-container .DateInput {
+    width: 120px;
+}
+.date-search-container .DateInput_input {
+    font-size: 0.875rem;
+    padding: 0.75rem;
+    border-radius: 0.5rem;
+    border: 1px solid var(--border-color);
+    background-color: #F9FAFB;
+}
+.date-search-container .button-secondary {
+    padding: 0.7rem 1rem;
+    border-radius: 0.5rem;
+    flex-grow: 1;
+}
+
+/* Login Page Styles */
+.login-body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background-color: var(--background-color);
+}
+.login-container {
+    background-color: var(--card-background);
+    padding: 2.5rem;
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow);
+    width: 100%;
+    max-width: 400px;
+    box-sizing: border-box;
+}
+.login-container h2 {
+    text-align: center;
+    margin-top: 0;
+    margin-bottom: 1.5rem;
+    font-size: 1.75rem;
+    color: var(--text-color);
+}
+.login-container form {
+    display: flex;
+    flex-direction: column;
+}
+.login-container label {
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    font-size: 0.875rem;
+}
+.login-container input {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid var(--border-color);
+    border-radius: 0.5rem;
+    box-sizing: border-box;
+    background-color: #F9FAFB;
+    margin-bottom: 1rem;
+    font-size: 1rem;
+}
+.login-container button {
+    margin-top: 1rem;
+    width: 100%;
+    padding: 0.75rem;
+    border: none;
+    background-color: var(--primary-color);
+    color: white;
+    border-radius: 0.5rem;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 1rem;
+    transition: background-color 0.2s ease;
+}
+.login-container button:hover {
+    background-color: var(--primary-color-hover);
+}
+.error-message {
+    color: #DC2626; /* A strong red for errors */
+    text-align: center;
+    margin-top: 1rem;
+    font-size: 0.875rem;
+    font-weight: 600;
+}

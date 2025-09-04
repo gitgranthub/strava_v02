@@ -1,8 +1,21 @@
-app_username: strava_username_or_email
-app_password: strava_password
+
+# config.yaml
+
+# Optional: Simple username/password to protect the app itself.
+# Leave blank to disable this login screen.
+app_username: 'strava_user_email'
+app_password: 'strava_password'
+
+# Strava API Credentials
 strava:
-  client_id: 'app_client_id'
-  client_secret: '#########'
-  refresh_token: '#########'
-  access_token: "############"
-  expires_at: 1756780223
+  client_id: 'strava_app_client_id'
+  client_secret: '##########'
+  # The refresh_token, access_token, and expires_at fields below are now managed
+  # automatically in a separate `tokens.json` file after you log in the first time.
+  # You can leave them blank here.
+  refresh_token: '####################'
+  access_token: '########################'
+  expires_at: 0
+
+# Optional: Get a free token from https://www.mapbox.com/ for better maps.
+mapbox_token: '#################################'
