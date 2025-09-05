@@ -487,3 +487,22 @@ header h1 {
     font-family: var(--font-family);
     font-size: 0.875rem;
 }
+
+/* --- NEW: Loading Spinner Styling --- */
+
+/* Target the default Dash loading spinner */
+.dash-spinner {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 2rem 0; /* Give it some vertical space */
+}
+
+/* Style the spinner itself */
+.dash-spinner .dash-spinner-inner {
+    width: 40px !important; /* Make it larger */
+    height: 40px !important;
+    border-width: 4px !important;
+    border-color: var(--primary-color) !important; /* Use our theme color */
+    border-right-color: transparent !important; /* Create the classic spinning look */
+}

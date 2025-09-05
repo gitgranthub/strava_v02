@@ -9,21 +9,27 @@ COLOR_PRIMARY_TRACE = "#2563EB" # A nice blue for chart lines
 COLOR_BACKGROUND = "#F8F9FA"
 COLOR_GRID = "#E5E7EB"
 
-def build_map(df: pd.DataFrame, color_by: str, mapbox_token: str) -> go.Figure:
+def build_map(df: pd.DataFrame, color_by: str, mapbox_token: str, unit_system: str, speed_col: str, elev_col: str) -> go.Figure:
     """Creates an interactive map figure from the activity data."""
     if df.empty or 'lat' not in df.columns or 'lon' not in df.columns:
         return go.Figure().update_layout(title="Map (No GPS Data)")
 
+    # --- NEW: DYNAMIC HOVER DATA ---
+    speed_unit = "mph" if unit_system == 'imperial' else "m/s"
+    elev_unit = "ft" if unit_system == 'imperial' else "m"
+
     hover_data = {
         "t_rel_min": ":.1f",
-        "speed_mps": ":.1f",
+        speed_col: f":.1f ({speed_unit})", # e.g. ":.1f (mph)"
+        elev_col: f":.0f ({elev_unit})",   # e.g. ":.0f (ft)"
         "lat": ":.4f",
         "lon": ":.4f",
     }
     if 'heartrate' in df.columns: hover_data['heartrate'] = True
     if 'cadence' in df.columns: hover_data['cadence'] = True
 
-    color_by = color_by if color_by in df.columns else None
+    # The color_by still uses the original metric column name
+    color_by_col = color_by if color_by in df.columns else None
     
     map_style = "open-street-map"
     if mapbox_token:
@@ -34,7 +40,7 @@ def build_map(df: pd.DataFrame, color_by: str, mapbox_token: str) -> go.Figure:
         df,
         lat="lat",
         lon="lon",
-        color=color_by,
+        color=color_by_col,
         color_continuous_scale=px.colors.sequential.Turbo,
         hover_name=None,
         hover_data=hover_data,
@@ -45,11 +51,10 @@ def build_map(df: pd.DataFrame, color_by: str, mapbox_token: str) -> go.Figure:
         margin={"r": 0, "t": 0, "l": 0, "b": 0},
         height=550,
         legend=dict(yanchor="top", y=0.99, xanchor="left", x=0.01),
-        # This new section fixes the legend overlap
         coloraxis_colorbar=dict(
-            yanchor="top", y=0.9, # Shift the colorbar down from the top
+            yanchor="top", y=0.9,
             xanchor="right", x=0.99,
-            len=0.75 # Make it slightly shorter if needed
+            len=0.75
         )
     )
     return fig

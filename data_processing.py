@@ -8,6 +8,11 @@ from typing import List, Dict, Any, Tuple
 
 import pandas as pd
 
+# --- NEW: Unit Conversion Constants ---
+METERS_TO_FEET = 3.28084
+METERS_TO_MILES = 0.000621371
+MPS_TO_MPH = 2.23694
+
 # --- Utility ---
 def haversine_m(lat1: float, lon1: float, lat2: float, lon2: float) -> float:
     """Calculates the distance in meters between two lat/lon points."""
@@ -92,14 +97,11 @@ def apply_moving_filter(df: pd.DataFrame, min_speed_mps: float) -> pd.DataFrame:
     moving_df = df[df['speed_mps'] >= min_speed_mps].copy()
     
     if not moving_df.empty:
-        # Calculate the time difference BETWEEN each moving point.
         time_diffs = moving_df['t_rel_sec'].diff().fillna(0)
         
-        # Create a new column for cumulative MOVING time. This is the key fix.
         moving_df['moving_t_rel_sec'] = time_diffs.cumsum()
         moving_df['moving_t_rel_min'] = moving_df['moving_t_rel_sec'] / 60.0
 
-        # Recalculate cumulative distance based only on moving segments.
         distances = [0.0]
         for i in range(1, len(moving_df)):
             prev = moving_df.iloc[i-1]
@@ -109,8 +111,6 @@ def apply_moving_filter(df: pd.DataFrame, min_speed_mps: float) -> pd.DataFrame:
         
         moving_df['moving_distance'] = pd.Series(distances, index=moving_df.index).cumsum()
         
-        # Overwrite the original time and distance columns for plotting.
-        # This ensures the charts use the new, correct moving-time-based axes.
         moving_df['t_rel_min'] = moving_df['moving_t_rel_min']
         moving_df['distance'] = moving_df['moving_distance']
 
